@@ -45,8 +45,10 @@
         const webhook = document.querySelector('#webhook').value;
         const datetime = document.querySelector('#datetime').value;
         
-        alert('Empty inputs');
-        return;
+        if(!webhook || !datetime) {
+          alert('Empty inputs');
+          return;
+        }
 
         const request = new XMLHttpRequest();
         request.open("POST", webhook);
