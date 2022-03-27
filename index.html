@@ -1,0 +1,68 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Webhook Time Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  </head>
+  <body>
+    <div class="row">
+        <div class="col s10 offset-s1">
+            <input id="webhook" type="text" onChange="saveWebhook()"></input>
+        </div>
+        <div class="col s4 offset-s4">
+            <input id="datetime" type="datetime-local" onChange="saveDateTime()"></input>
+        </div>
+        <div class="col">
+            <div class="switch">
+                <label>
+                  <input id="remaining" type="checkbox">
+                  <span class="lever"></span>
+                  Show remaining time
+                </label>
+              </div>
+        </div>
+        <div class="col s4 offset-s6">
+            <button class="btn" onclick="sendMessage()">Send</button>
+        </div>
+        <script>
+            document.querySelector('#webhook').value = localStorage.getItem('webhook');
+            document.querySelector('#datetime').value = (new Date(localStorage.getItem('time')));
+        </script>
+    </div>
+  </body>
+
+  <script>
+    function saveWebhook() {
+        localStorage.setItem('webhook', document.querySelector('#webhook').value);
+    }
+
+    function saveDateTime() {
+        localStorage.setItem('datetime', document.querySelector('#datetime').value);
+    }
+
+    function sendMessage() {
+        const webhook = document.querySelector('#webhook').value;
+        const datetime = document.querySelector('#datetime').value;
+        
+        alert('Empty inputs');
+        return;
+
+        const request = new XMLHttpRequest();
+        request.open("POST", webhook);
+
+        request.setRequestHeader('Content-type', 'application/json');
+        const unixtime = (new Date(`${datetime}Z`)).getTime() / 1000;
+        const remainingTime = document.querySelector('#remaining').checked;
+        console.log(remainingTime);
+
+        const params = {
+            username: "Time Manager",
+            avatar_url: "",
+            content: `<t:${unixtime}:f>${remainingTime ? `(<t:${unixtime}:R>)` : ''}`,
+        };
+
+        request.send(JSON.stringify(params));
+    }
+  </script>
+</html>
